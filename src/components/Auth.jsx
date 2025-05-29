@@ -4,43 +4,65 @@ import './AuthForm.css';
 
 export default function AuthForm({ onAuth }) {
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('Staff');
   const [password, setPassword] = useState('');
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    let authResult;
-    if (isSignup) {
-      authResult = await supabase.auth.signUp({ email, password });
+  if (isSignup) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-      const { data: userData, error: signupError } = authResult;
-      if (signupError) {
-        setError(signupError.message);
-        return;
-      }
-
-      const { user } = userData;
-      await supabase.from('inventory_accounts').insert([
-        {
-          user_id: user.id,
-          email: user.email,
-        }
-      ]);
-
-      onAuth(user);
-    } else {
-      authResult = await supabase.auth.signInWithPassword({ email, password });
-      const { data, error } = authResult;
-      if (error) {
-        setError(error.message);
-      } else {
-        setError('');
-        onAuth(data.user);
-      }
+    if (error) {
+      setError(error.message);
+      return;
     }
-  };
+
+    // 🕒 Wait a moment to make sure Supabase backend finishes auth
+    const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      setError('Could not fetch new user session');
+      return;
+    }
+
+    const user = sessionData.user;
+
+    // ✅ Insert into your custom table
+    const { error: insertError } = await supabase.from('inventory_accounts').insert([
+      {
+        user_id: user.id,
+        email: user.email,
+        role: role.toLowerCase()
+      }
+    ]);
+
+    if (insertError) {
+      console.error('Insert error:', insertError);
+      setError('Database error saving new user');
+      return;
+    }
+
+    onAuth(user);
+  } else {
+    // login
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      onAuth(data.user);
+    }
+  }
+};
 
   return (
     <div className="auth-container">
@@ -54,6 +76,14 @@ export default function AuthForm({ onAuth }) {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+
+          {isSignup && (
+        <select value={role} onChange={(e) => setRole(e.target.value)} required>
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="staff">Staff</option>
+          </select>
+        )}
 
           <input
             type="password"
@@ -73,6 +103,7 @@ export default function AuthForm({ onAuth }) {
             {isSignup ? 'Log In' : 'Sign Up'}
           </span>
         </p>
+
       </div>
     </div>
   );
