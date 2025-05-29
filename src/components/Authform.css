@@ -1,35 +1,38 @@
-.auth-container {
-  width: 100vw;
+.auth-wrapper {
   height: 100vh;
-  background: linear-gradient(to right, #1d2b64, #f8cdda); /* or keep your blue if you prefer */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+  flex-direction: column;
+  background-color: #172a45;
 }
 
-/* Centered card */
+.auth-wrapper h1 {
+  text-align: center;
+  color: white;
+  margin: 0;
+  padding: 30px;
+  font-size: 2.2rem;
+  background-color: #172a45;
+}
+
 .auth-card {
-  background-color: #ffffff;
-  padding: 60px 50px;
+  background-color: white;
+  padding: 50px 40px;
+  margin: auto;
   border-radius: 16px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
   width: 100%;
-  max-width: 500px;
-  min-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Header */
 .auth-card h2 {
-  margin-bottom: 30px;
-  font-size: 2.5rem;
+  margin-bottom: 25px;
   color: #172a45;
+  font-size: 1.8rem;
 }
 
-/* Form content */
 .auth-card form {
   width: 100%;
   display: flex;
@@ -37,49 +40,44 @@
   gap: 20px;
 }
 
-/* Inputs */
-.auth-card input {
-  padding: 16px;
-  font-size: 1.1rem;
+.auth-card input,
+.auth-card select {
+  padding: 14px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 100%;
 }
 
-/* Button */
 .auth-card button {
-  padding: 16px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
+  padding: 14px;
+  font-size: 1rem;
   background-color: #0077ff;
   color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .auth-card button:hover {
   background-color: #005fcc;
 }
 
-/* Toggle and errors */
-.auth-toggle {
-  margin-top: 24px;
-  font-size: 1rem;
-  color: #333;
+.auth-card p {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
-.auth-toggle span {
+.auth-card .toggle {
   color: #0077ff;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
   text-decoration: underline;
 }
 
-.error {
+.auth-card .error {
   color: red;
   font-size: 0.9rem;
   text-align: center;
-  margin-top: -10px;
 }

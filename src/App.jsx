@@ -1,40 +1,31 @@
 import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
-import './App.css';
+import Auth from './components/Auth';
 import LogoutButton from './components/LogoutButton';
-import AuthForm from './components/Auth';
+
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Get current user on mount
-    supabase.auth.getUser().then(({ data: { user }, error }) => {
-      if (error) console.error('Error fetching user:', error);
-      setUser(user);
-    });
-
-    // Subscribe to auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => {
-      authListener?.subscription?.unsubscribe();
-    };
+    const stored = localStorage.getItem('user');
+    if (stored) setUser(JSON.parse(stored));
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
   return (
-    <div className="App">
-      <h1>Inventory Management</h1>
+    <div>
       {user ? (
         <>
-          <h2>Welcome, {user.email}</h2>
-          <LogoutButton onLogout={() => setUser(null)} />
-          <InventoryForm />
+          <h1>Welcome, {user.email}</h1>
+          <p>Role: {user.role}</p>
+          <LogoutButton onLogout={handleLogout} />
         </>
       ) : (
-        <AuthForm onAuth={setUser} />
+        <Auth onAuth={setUser} />
       )}
     </div>
   );
