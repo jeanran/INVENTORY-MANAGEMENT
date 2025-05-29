@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
+import InventoryTracking from './components/InventoryTracking';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -20,7 +21,10 @@ function App() {
   return (
     <div>
       {user ? (
-        <Dashboard user={user} onLogout={handleLogout} />
+        <>
+          <Dashboard user={user} onLogout={handleLogout} />
+          <InventoryTracking />
+        </>
       ) : (
         <Auth onAuth={setUser} />
       )}

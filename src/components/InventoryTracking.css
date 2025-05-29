@@ -1,0 +1,65 @@
+.tracking-page {
+  padding: 40px;
+  background-color: #f8f9fb;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h2 {
+  color: #172a45;
+  margin-bottom: 20px;
+}
+
+.filters {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.inventory-table th,
+.inventory-table td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.status-badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: white;
+}
+
+.status-badge.available {
+  background-color: #2ecc71;
+}
+
+.status-badge.reserved {
+  background-color: #f1c40f;
+}
+
+.status-badge.in_transit {
+  background-color: #3498db;
+}
+
+.status-badge.damaged {
+  background-color: #e74c3c;
+}
