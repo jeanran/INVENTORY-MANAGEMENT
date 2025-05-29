@@ -63,3 +63,12 @@ h2 {
 .status-badge.damaged {
   background-color: #e74c3c;
 }
+.no-data {
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #777;
+  background: #f0f0f0;
+  border-radius: 8px;
+}
