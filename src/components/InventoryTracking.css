@@ -1,74 +1,42 @@
-.tracking-page {
-  padding: 40px;
-  background-color: #f8f9fb;
-  min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
+.inventory-tracking {
+    font-family: Arial, sans-serif;
+    padding: 20px;
 }
 
-h2 {
-  color: #172a45;
-  margin-bottom: 20px;
+.inventory-tracking h2 {
+    text-align: center;
 }
 
-.filters {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.filter-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.filters select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.filter-section input,
+.filter-section select,
+.filter-section button {
+    padding: 8px;
 }
 
-.inventory-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
 }
 
-.inventory-table th,
-.inventory-table td {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-  text-align: center;
-  font-size: 0.95rem;
+table th, table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
 }
 
-.status-badge {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-weight: 600;
-  text-transform: capitalize;
-  color: white;
+table th {
+    background-color: #f4f4f4;
 }
 
-.status-badge.available {
-  background-color: #2ecc71;
-}
-
-.status-badge.reserved {
-  background-color: #f1c40f;
-}
-
-.status-badge.in_transit {
-  background-color: #3498db;
-}
-
-.status-badge.damaged {
-  background-color: #e74c3c;
-}
-.no-data {
-  margin-top: 20px;
-  padding: 20px;
-  text-align: center;
-  font-size: 1.1rem;
-  color: #777;
-  background: #f0f0f0;
-  border-radius: 8px;
-}
+.status-available { color: green; font-weight: bold; }
+.status-reserved { color: orange; font-weight: bold; }
+.status-in_transit { color: blue; font-weight: bold; }
+.status-damaged { color: red; font-weight: bold; }
