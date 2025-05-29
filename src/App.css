@@ -1,0 +1,19 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #172a45;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+}
+h1 {
+  
+  color: #ffffff;
+  font-size: 2rem;
+}
+.App {
+  text-align: center;
+}
