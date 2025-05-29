@@ -3,11 +3,14 @@ body {
   background-color: #172a45;
   margin: 0;
   padding: 0;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 
-
+*{
+  box-sizing: border-box;
+}
 }
 h1 {
   
