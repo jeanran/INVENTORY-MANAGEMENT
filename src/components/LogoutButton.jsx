@@ -1,21 +1,19 @@
-// components/LogoutButton.jsx
-import { supabase } from '../supabaseClient';
-
-function LogoutButton({ onLogout }) {
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Logout failed:', error.message);
-    } else {
-      onLogout();
-    }
-  };
-
+export default function LogoutButton({ onLogout }) {
   return (
-    <button onClick={handleLogout}>
+    <button onClick={onLogout} style={btnStyle}>
       Logout
     </button>
   );
 }
 
-export default LogoutButton;
+const btnStyle = {
+  marginTop: '30px',
+  padding: '10px 20px',
+  fontWeight: 'bold',
+  fontSize: '1rem',
+  backgroundColor: '#0077ff',
+  color: 'white',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+};

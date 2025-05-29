@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import Auth from './components/Auth';
-import LogoutButton from './components/LogoutButton';
-
+import Dashboard from './components/Dashboard';
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
   }, []);
 
   const handleLogout = () => {
@@ -19,11 +20,7 @@ function App() {
   return (
     <div>
       {user ? (
-        <>
-          <h1>Welcome, {user.email}</h1>
-          <p>Role: {user.role}</p>
-          <LogoutButton onLogout={handleLogout} />
-        </>
+        <Dashboard user={user} onLogout={handleLogout} />
       ) : (
         <Auth onAuth={setUser} />
       )}
