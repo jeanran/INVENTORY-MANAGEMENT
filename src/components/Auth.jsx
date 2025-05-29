@@ -14,7 +14,7 @@ export default function Auth({ onAuth }) {
     e.preventDefault();
 
     if (isSignup) {
-      // Sign up
+      // ✅ Sign up: hash password and insert
       const hashed = await bcrypt.hash(password, 10);
       const { error: insertError } = await supabase.from('inventory_accounts').insert([
         {
@@ -34,23 +34,31 @@ export default function Auth({ onAuth }) {
       setEmail('');
       setPassword('');
     } else {
+      // ✅ Login
       // Login
-      const { data, error: loginError } = await supabase
-        .from('inventory_accounts')
-        .select('*')
-        .eq('email', email)
-        .single();
+const { data, error: loginError } = await supabase
+  .from('inventory_accounts')
+  .select('*')
+  .eq('email', email)
+  .single();
 
-      if (loginError || !data) {
-        setError('Invalid email or password');
-        return;
-      }
+console.log('🔎 Login fetched user:', data);
+console.log('🔐 Entered password:', password);
+console.log('💾 Stored hash:', data?.password);
 
-      const match = await bcrypt.compare(password, data.password);
-      if (!match) {
-        setError('Invalid email or password');
-        return;
-      }
+if (loginError || !data) {
+  console.log('❌ Login error:', loginError);
+  setError('Invalid email or password');
+  return;
+}
+
+const match = await bcrypt.compare(password, data.password);
+console.log('✅ Password match result:', match);
+
+if (!match) {
+  setError('Invalid email or password');
+  return;
+}
 
       localStorage.setItem('user', JSON.stringify(data));
       onAuth(data);
@@ -63,10 +71,26 @@ export default function Auth({ onAuth }) {
       <div className="auth-card">
         <h2>{isSignup ? 'Sign Up' : 'Login'}</h2>
         <form onSubmit={handleSubmit}>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           {isSignup && (
-            <select value={role} onChange={(e) => setRole(e.target.value)} required>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+            >
               <option value="staff">Staff</option>
               <option value="admin">Admin</option>
             </select>
