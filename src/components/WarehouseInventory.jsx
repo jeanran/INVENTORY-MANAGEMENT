@@ -35,31 +35,29 @@ const WarehouseInventory = () => {
       return;
     }
 
-    console.log('Raw data from Supabase:', data); // Debug: check if data is coming
+    console.log('Raw data from Supabase:', data);
 
-    // Group data by warehouse ID
+    // Group data by warehouse name
     const grouped = {};
     data.forEach(item => {
-      const wh_id = item.wh_id;
       const warehouseName = item.warehouses?.name || 'N/A';
       const warehouseLocation = item.warehouses?.location || 'N/A';
       const productName = item.products?.name;
 
-      if (!grouped[wh_id]) {
-        grouped[wh_id] = {
-          wh_id,
+      if (!grouped[warehouseName]) {
+        grouped[warehouseName] = {
           name: warehouseName,
           location: warehouseLocation,
           products: [],
         };
       }
 
-      if (productName) {
-        grouped[wh_id].products.push(productName);
+      if (productName && !grouped[warehouseName].products.includes(productName)) {
+        grouped[warehouseName].products.push(productName);
       }
     });
 
-    console.log('Grouped data:', grouped); // Debug: check grouped structure
+    console.log('Grouped data:', grouped);
     setGroupedData(Object.values(grouped));
     setLoading(false);
   };
@@ -75,8 +73,8 @@ const WarehouseInventory = () => {
         <p>Loading...</p>
       ) : groupedData.length > 0 ? (
         <div className="card-container">
-          {groupedData.map(warehouse => (
-            <div key={warehouse.wh_id} className="inventory-card">
+          {groupedData.map((warehouse, index) => (
+            <div key={index} className="inventory-card">
               <div className="card-section">
                 <span className="card-label">Warehouse</span>
                 <span className="card-value">{warehouse.name}</span>
@@ -88,8 +86,8 @@ const WarehouseInventory = () => {
               <div className="card-section">
                 <span className="card-label">Products</span>
                 <ul className="card-value">
-                  {warehouse.products.map((product, index) => (
-                    <li key={index}>{product}</li>
+                  {warehouse.products.map((product, idx) => (
+                    <li key={idx}>{product}</li>
                   ))}
                 </ul>
               </div>

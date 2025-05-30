@@ -3,33 +3,36 @@ import InventoryTracking from './InventoryTracking';
 import InventorySummary from './InventorySummary';
 import LogoutButton from './LogoutButton';
 import WarehouseInventory from './WarehouseInventory';
-
+import './Dashboard.css';
 
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate();
+
+  // Capitalize first letter of role
+  const capitalizedRole = user?.role
+    ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+    : '';
 
   return (
     <Routes>
       <Route
         path="/"
         element={
-          <div style={styles.container}>
-            <h2>Welcome, {user.role}</h2>
-            <h1 style={styles.title}>Dashboard</h1>
+          <div className="dashboard-container">
+            <h2 className="welcome">Welcome, {capitalizedRole}</h2>
+            <h1 className="dashboard-title">Dashboard</h1>
 
-            <div style={styles.links}>
-              <button onClick={() => navigate('/products')} style={styles.button}>
+            <div className="dashboard-links">
+              <button onClick={() => navigate('/products')} className="dashboard-button">
                 Inventory Tracking
               </button>
-              <button onClick={() => navigate('/inventory')} style={styles.button}>
+              <button onClick={() => navigate('/inventory')} className="dashboard-button">
                 Inventory Summary
               </button>
-              <button onClick={() => navigate('/warehouse-inventory')} style={styles.button}>
+              <button onClick={() => navigate('/warehouse-inventory')} className="dashboard-button">
                 Warehouse Inventory
               </button>
-
             </div>
-            
 
             <LogoutButton onLogout={onLogout} />
           </div>
@@ -41,37 +44,3 @@ export default function Dashboard({ user, onLogout }) {
     </Routes>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: '600px',
-    margin: '80px auto',
-    background: '#fff',
-    padding: '50px',
-    borderRadius: '12px',
-    boxShadow: '0 8px 30px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-    fontFamily: 'Arial, sans-serif',
-  },
-  title: {
-    fontSize: '28px',
-    margin: '30px 0 20px',
-    color: '#172a45',
-  },
-  links: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    marginBottom: '30px',
-  },
-  button: {
-    padding: '14px 20px',
-    fontSize: '16px',
-    borderRadius: '6px',
-    border: 'none',
-    backgroundColor: '#0077ff',
-    color: '#fff',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-  },
-};

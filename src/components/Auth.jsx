@@ -20,7 +20,7 @@ export default function Auth({ onAuth }) {
         {
           email,
           password: hashed,
-          role: role.toLowerCase()
+          role: role.toUpperCase()
         }
       ]);
 
@@ -91,8 +91,8 @@ if (!match) {
               onChange={(e) => setRole(e.target.value)}
               required
             >
-              <option value="staff">Staff</option>
-              <option value="admin">Admin</option>
+              <option value="Staff">Staff</option>
+              <option value="Admin">Admin</option>
             </select>
           )}
           <button type="submit">{isSignup ? 'Sign Up' : 'Login'}</button>
