@@ -1,0 +1,59 @@
+/* Card layout for warehouse inventory */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 20px;
+}
+@media (max-width: 960px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .card-container {
+    grid-template-columns: 1fr; /* 1 column on small screens */
+  }
+}
+
+.inventory-card {
+  background-color: #ffffff;
+  border-left: 5px solid #0077ff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.inventory-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-section {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+  flex: 1;
+}
+
+.card-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.card-value {
+  font-size: 16px;
+  color: #172a45;
+  margin-top: 2px;
+  display: block;
+}

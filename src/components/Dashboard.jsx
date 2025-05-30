@@ -2,6 +2,7 @@ import { useNavigate, Routes, Route } from 'react-router-dom';
 import InventoryTracking from './InventoryTracking';
 import InventorySummary from './InventorySummary';
 import LogoutButton from './LogoutButton';
+import WarehouseInventory from './WarehouseInventory';
 
 
 export default function Dashboard({ user, onLogout }) {
@@ -23,6 +24,9 @@ export default function Dashboard({ user, onLogout }) {
               <button onClick={() => navigate('/inventory')} style={styles.button}>
                 Inventory Summary
               </button>
+              <button onClick={() => navigate('/warehouse-inventory')} style={styles.button}>
+                Warehouse Inventory
+              </button>
 
             </div>
             
@@ -33,6 +37,7 @@ export default function Dashboard({ user, onLogout }) {
       />
       <Route path="/products" element={<InventoryTracking />} />
       <Route path="/inventory" element={<InventorySummary />} />
+      <Route path="/warehouse-inventory" element={<WarehouseInventory />} />
     </Routes>
   );
 }
