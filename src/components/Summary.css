@@ -1,4 +1,6 @@
 .inventory-summary {
+  margin-top: 20px; /* or any value you like */
+  margin-bottom: 20px;
   padding: 30px;
   font-family: 'Segoe UI', sans-serif;
   color: #172a45;
@@ -6,6 +8,7 @@
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 .inventory-summary h2 {
   margin-bottom: 1rem;
@@ -16,7 +19,8 @@
 .summary-cards {
   display: flex;
   overflow-x: auto;
-  gap: 20px;
+  margin-top: 10px;
+  gap: 10x;
   padding-bottom: 10px;
   scroll-snap-type: x mandatory;
 }

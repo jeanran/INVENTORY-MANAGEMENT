@@ -9,12 +9,11 @@ body {
 }
 
 .dashboard-container {
-  width: 90vw;               /* Full viewport width */
-  margin: 10;  
-  margin-top: 10;                /* Remove auto-centering */
-  padding: 48px;              /* Keep inner padding */
+  width: 80vw;               /* Full viewport width */
+  margin-top: 50px;                 /* Remove auto-centering */
+  padding: 30px;              /* Keep inner padding */
   background-color: #ffffff;
-  border-radius: 10;           /* Remove rounded corners if edge-to-edge */
+  border-radius: 15px;           /* Remove rounded corners if edge-to-edge */
   box-shadow: none;           /* Optional: remove shadow for flat look */
   text-align: center;
   transition: box-shadow 0.3s ease;
