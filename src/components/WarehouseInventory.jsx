@@ -11,6 +11,7 @@ const supabase = createClient(
 const WarehouseInventory = () => {
   const [groupedData, setGroupedData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Holds warehouse+product
 
   const fetchWarehouseInventory = async () => {
     setLoading(true);
@@ -19,12 +20,14 @@ const WarehouseInventory = () => {
       .from('warehouse_products')
       .select(`
         wh_id,
+        product_id,
         warehouses (
           name,
           location
         ),
         products (
-          name
+          name,
+          stock_quantity
         )
       `)
       .order('wh_id', { ascending: true });
@@ -35,14 +38,13 @@ const WarehouseInventory = () => {
       return;
     }
 
-    console.log('Raw data from Supabase:', data);
-
-    // Group data by warehouse name
     const grouped = {};
     data.forEach(item => {
       const warehouseName = item.warehouses?.name || 'N/A';
       const warehouseLocation = item.warehouses?.location || 'N/A';
       const productName = item.products?.name;
+      const productId = item.product_id;
+      const stockQuantity = item.products?.stock_quantity || 0;
 
       if (!grouped[warehouseName]) {
         grouped[warehouseName] = {
@@ -52,14 +54,22 @@ const WarehouseInventory = () => {
         };
       }
 
-      if (productName && !grouped[warehouseName].products.includes(productName)) {
-        grouped[warehouseName].products.push(productName);
+      if (productName && productId) {
+        grouped[warehouseName].products.push({
+          name: productName,
+          id: productId,
+          stock_quantity: stockQuantity,
+        });
       }
     });
 
-    console.log('Grouped data:', grouped);
     setGroupedData(Object.values(grouped));
     setLoading(false);
+  };
+
+  const handleProductClick = (warehouseName, productId) => {
+    const key = `${warehouseName}-${productId}`;
+    setSelectedProduct(prev => (prev === key ? null : key));
   };
 
   useEffect(() => {
@@ -85,10 +95,22 @@ const WarehouseInventory = () => {
               </div>
               <div className="card-section">
                 <span className="card-label">Products</span>
-                <ul className="card-value">
-                  {warehouse.products.map((product, idx) => (
-                    <li key={idx}>{product}</li>
-                  ))}
+                <ul className="product-list">
+                  {warehouse.products.map((product) => {
+                    const key = `${warehouse.name}-${product.id}`;
+                    return (
+                      <li
+                        key={key}
+                        onClick={() => handleProductClick(warehouse.name, product.id)}
+                        className={`product-item ${selectedProduct === key ? 'selected' : ''}`}
+                      >
+                        <span className="product-name">{product.name}</span>
+                        {selectedProduct === key && (
+                          <span className="product-quantity">Stock: {product.stock_quantity}</span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>

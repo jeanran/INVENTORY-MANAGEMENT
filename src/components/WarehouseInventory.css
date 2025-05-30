@@ -148,3 +148,49 @@ ul.card-value li:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-item {
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: #f5f7fa;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.product-item:hover {
+  background: #ebeff5;
+}
+
+.product-item.selected {
+  background: #e1e8f0;
+  font-weight: 500;
+}
+
+.product-name {
+  flex: 1;
+}
+
+.product-quantity {
+  color: #4a5568;
+  font-size: 0.9em;
+  margin-left: 10px;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(5px); }
+  to { opacity: 1; transform: translateX(0); }
+}
