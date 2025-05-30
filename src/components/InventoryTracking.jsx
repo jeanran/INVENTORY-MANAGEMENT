@@ -2,147 +2,152 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import './InventoryTracking.css';
 
-const supabaseUrl = 'https://iradphcrwwokdrnhxpnd.supabase.co';
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your actual key
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(
+  'https://iradphcrwwokdrnhxpnd.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyYWRwaGNyd3dva2Rybmh4cG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3MTI5ODEsImV4cCI6MjA2MjI4ODk4MX0.X1okOgCMPHNh_vufxDnSlENTO99tMDjkSOXMeWawNrU'
+);
 
 const InventoryTracking = () => {
   const [inventory, setInventory] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
   const [filters, setFilters] = useState({
     product: '',
     warehouse: '',
-    barcode: '',
-    status: '',
+    status: ''
   });
+  const [loading, setLoading] = useState(true);
 
+  // Fetch filter options
+  const fetchFilters = async () => {
+    const { data: productList } = await supabase.from('products').select('product_id, name');
+    const { data: warehouseList } = await supabase.from('warehouses').select('warehouse_id, name');
+    setProducts(productList || []);
+    setWarehouses(warehouseList || []);
+  };
+
+  // Fetch inventory based on filters
   const fetchInventory = async () => {
-    let query = supabase
-      .from('inventory')
-      .select(`
-        inventory_id,
-        stock_quantity,
-        barcode,
-        status,
-        last_updated,
-        products ( name ),
-        warehouses ( name )
-      `)
-      .order('last_updated', { ascending: false });
+    setLoading(true);
+    try {
+      let query = supabase
+        .from('inventory')
+        .select(
+          `inventory_id, stock_quantity, barcode, status, last_updated, products:product_id(name), warehouses:warehouse_id(name)`
+        )
+        .order('last_updated', { ascending: false });
 
-    // Apply filters dynamically
-    if (filters.barcode) {
-      query = query.eq('barcode', filters.barcode);
-    }
-    if (filters.status) {
-      query = query.eq('status', filters.status);
-    }
+      if (filters.status) query = query.eq('status', filters.status);
 
-    const { data, error } = await query;
+      const { data, error } = await query;
+      if (error) throw error;
 
-    if (error) {
-      console.error('Supabase Error:', error);
-    } else {
-      let filteredData = data;
+      let filtered = data;
 
-      // Filter by product name if provided
       if (filters.product) {
-        filteredData = filteredData.filter(item =>
-          item.products?.name?.toLowerCase().includes(filters.product.toLowerCase())
-        );
+        filtered = filtered.filter(item => item.products?.name === filters.product);
       }
-
-      // Filter by warehouse name if provided
       if (filters.warehouse) {
-        filteredData = filteredData.filter(item =>
-          item.warehouses?.name?.toLowerCase().includes(filters.warehouse.toLowerCase())
-        );
+        filtered = filtered.filter(item => item.warehouses?.name === filters.warehouse);
       }
 
-      setInventory(filteredData.map(item => ({
-        inventory_id: item.inventory_id,
-        product: item.products?.name ?? 'N/A',
-        warehouse: item.warehouses?.name ?? 'N/A',
-        quantity: item.stock_quantity,
-        barcode: item.barcode,
-        status: item.status,
-        last_updated: item.last_updated,
-      })));
+      setInventory(
+        filtered.map(item => ({
+          id: item.inventory_id,
+          product: item.products?.name || 'N/A',
+          warehouse: item.warehouses?.name || 'N/A',
+          quantity: item.stock_quantity,
+          barcode: item.barcode,
+          status: item.status,
+          lastUpdated: new Date(item.last_updated).toLocaleString()
+        }))
+      );
+    } catch (err) {
+      console.error('Fetch error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
+    fetchFilters();
     fetchInventory();
   }, []);
 
   return (
     <div className="inventory-tracking">
-      <h2>Inventory Tracking</h2>
+      <h2>Inventory</h2>
       <div className="filter-section">
-        <div className="input-group">
-          <input
-            id="productInput"
-            type="text"
-            placeholder="Search by Product"
-            value={filters.product}
-            onChange={e => setFilters({ ...filters, product: e.target.value })}
-          />
-        </div>
-        <div className="input-group">
-          <input
-            id="warehouseInput"
-            type="text"
-            placeholder="Search by Warehouse"
-            value={filters.warehouse}
-            onChange={e => setFilters({ ...filters, warehouse: e.target.value })}
-          />
-        </div>
-        <div className="input-group">
-          <input
-            id="barcodeInput"
-            type="text"
-            placeholder="Search by Barcode"
-            value={filters.barcode}
-            onChange={e => setFilters({ ...filters, barcode: e.target.value })}
-          />
-        </div>
+        <select
+          value={filters.product}
+          onChange={e => setFilters({ ...filters, product: e.target.value })}
+        >
+          <option value="">All Products</option>
+          {products.map(p => (
+            <option key={p.product_id} value={p.name}>{p.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.warehouse}
+          onChange={e => setFilters({ ...filters, warehouse: e.target.value })}
+        >
+          <option value="">All Warehouses</option>
+          {warehouses.map(w => (
+            <option key={w.warehouse_id} value={w.name}>{w.name}</option>
+          ))}
+        </select>
+
         <select
           value={filters.status}
           onChange={e => setFilters({ ...filters, status: e.target.value })}
         >
-          <option value="">All Status</option>
+          <option value="">All Statuses</option>
           <option value="available">Available</option>
           <option value="reserved">Reserved</option>
           <option value="in_transit">In Transit</option>
           <option value="damaged">Damaged</option>
         </select>
+
         <button onClick={fetchInventory}>Apply Filters</button>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Warehouse</th>
-            <th>Quantity</th>
-            <th>Barcode</th>
-            <th>Status</th>
-            <th>Last Updated</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inventory.map(item => (
-            <tr key={item.inventory_id}>
-              <td>{item.product}</td>
-              <td>{item.warehouse}</td>
-              <td>{item.quantity}</td>
-              <td>{item.barcode}</td>
-              <td>{item.status}</td>
-              <td>{new Date(item.last_updated).toLocaleString()}</td>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Warehouse</th>
+              <th>Quantity</th>
+              <th>Barcode</th>
+              <th>Status</th>
+              <th>Last Updated</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {inventory.length > 0 ? (
+              inventory.map(item => (
+                <tr key={item.id}>
+                  <td>{item.product}</td>
+                  <td>{item.warehouse}</td>
+                  <td>{item.quantity}</td>
+                  <td>{item.barcode}</td>
+                  <td>{item.status}</td>
+                  <td>{item.lastUpdated}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>
+                  🚫 No inventory data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
