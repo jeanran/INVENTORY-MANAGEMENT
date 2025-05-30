@@ -11,7 +11,8 @@ const supabase = createClient(
 const WarehouseInventory = () => {
   const [groupedData, setGroupedData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Holds warehouse+product
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedWarehouse, setSelectedWarehouse] = useState('All');
 
   const fetchWarehouseInventory = async () => {
     setLoading(true);
@@ -67,55 +68,79 @@ const WarehouseInventory = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchWarehouseInventory();
+  }, []);
+
   const handleProductClick = (warehouseName, productId) => {
     const key = `${warehouseName}-${productId}`;
     setSelectedProduct(prev => (prev === key ? null : key));
   };
 
-  useEffect(() => {
-    fetchWarehouseInventory();
-  }, []);
+  const warehouseNames = ['All', ...new Set(groupedData.map(w => w.name))];
 
   return (
     <div className="warehouse-inventory">
       <h2>Warehouse Inventory</h2>
+
       {loading ? (
         <p>Loading...</p>
       ) : groupedData.length > 0 ? (
-        <div className="card-container">
-          {groupedData.map((warehouse, index) => (
-            <div key={index} className="inventory-card">
-              <div className="card-section">
-                <span className="card-label">Warehouse</span>
-                <span className="card-value">{warehouse.name}</span>
-              </div>
-              <div className="card-section">
-                <span className="card-label">Location</span>
-                <span className="card-value">{warehouse.location}</span>
-              </div>
-              <div className="card-section">
-                <span className="card-label">Products</span>
-                <ul className="product-list">
-                  {warehouse.products.map((product) => {
-                    const key = `${warehouse.name}-${product.id}`;
-                    return (
-                      <li
-                        key={key}
-                        onClick={() => handleProductClick(warehouse.name, product.id)}
-                        className={`product-item ${selectedProduct === key ? 'selected' : ''}`}
-                      >
-                        <span className="product-name">{product.name}</span>
-                        {selectedProduct === key && (
-                          <span className="product-quantity">Stock: {product.stock_quantity}</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="filter-dropdown">
+            <label htmlFor="warehouseFilter">Filter by Warehouse:</label>
+            <select
+              id="warehouseFilter"
+              value={selectedWarehouse}
+              onChange={(e) => setSelectedWarehouse(e.target.value)}
+            >
+              {warehouseNames.map((name, idx) => (
+                <option key={idx} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="card-container">
+            {groupedData
+              .filter(w => selectedWarehouse === 'All' || w.name === selectedWarehouse)
+              .map((warehouse, index) => (
+                <div key={index} className="inventory-card">
+                  <div className="card-section">
+                    <span className="card-label">Warehouse</span>
+                    <span className="card-value">{warehouse.name}</span>
+                  </div>
+                  <div className="card-section">
+                    <span className="card-label">Location</span>
+                    <span className="card-value">{warehouse.location}</span>
+                  </div>
+                  <div className="card-section">
+                    <span className="card-label">Products</span>
+                    <ul className="product-list">
+                      {warehouse.products.map((product) => {
+                        const key = `${warehouse.name}-${product.id}`;
+                        return (
+                          <li
+                            key={key}
+                            onClick={() => handleProductClick(warehouse.name, product.id)}
+                            className={`product-item ${selectedProduct === key ? 'selected' : ''}`}
+                          >
+                            <span className="product-name">{product.name}</span>
+                            {selectedProduct === key && (
+                              <span className="product-quantity">
+                                Stock: {product.stock_quantity}
+                              </span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </>
       ) : (
         <p style={{ color: 'red' }}>🚫 No warehouse inventory data found.</p>
       )}

@@ -194,3 +194,28 @@ ul.card-value li:hover {
   from { opacity: 0; transform: translateX(5px); }
   to { opacity: 1; transform: translateX(0); }
 }
+
+.filter-dropdown {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #e0e8ff;
+}
+
+.filter-dropdown select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+}
+
+.product-item {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.product-item.selected {
+  background-color: #e0f7fa;
+  border-radius: 5px;
+  padding: 5px;
+}
