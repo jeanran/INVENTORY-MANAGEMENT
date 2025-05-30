@@ -10,80 +10,58 @@ const supabase = createClient(
 const InventoryTracking = () => {
   const [inventory, setInventory] = useState([]);
   const [products, setProducts] = useState([]);
-  const [warehouses, setWarehouses] = useState([]);
   const [filters, setFilters] = useState({
     product: '',
-    warehouse: '',
     status: ''
   });
   const [loading, setLoading] = useState(true);
 
-  // Fetch filter options
-  const fetchFilters = async () => {
-    const { data: productList } = await supabase.from('products').select('product_id, name');
-    const { data: warehouseList } = await supabase.from('warehouses').select('warehouse_id, name, location');
+  const fetchProducts = async () => {
+    const { data: productList, error } = await supabase.from('products').select('product_id, name');
+    if (error) {
+      console.error('Product fetch error:', error.message);
+      return;
+    }
     setProducts(productList || []);
-    setWarehouses(warehouseList || []);
   };
 
-  // Fetch inventory with filters
   const fetchInventory = async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from('inventory')
-        .select(`
-          inventory_id,
-          stock_quantity,
-          barcode,
-          status,
-          last_updated,
-          products:product_id (name),
-          warehouses:warehouse_id (name, location)
-        `)
+      const { data, error } = await supabase
+        .from('inventory_full_view')
+        .select('*')
         .order('last_updated', { ascending: false });
 
-      if (filters.status) query = query.eq('status', filters.status);
-
-      const { data, error } = await query;
       if (error) throw error;
 
       let filtered = data;
 
       if (filters.product) {
-        filtered = filtered.filter(item => item.products?.name === filters.product);
-      }
-      if (filters.warehouse) {
-        filtered = filtered.filter(item => item.warehouses?.name === filters.warehouse);
+        filtered = filtered.filter(item => item.product_name === filters.product);
       }
 
-      setInventory(
-        filtered.map(item => ({
-          id: item.inventory_id,
-          product: item.products?.name || 'N/A',
-          warehouse: item.warehouses?.name || 'N/A',
-          location: item.warehouses?.location || 'N/A',
-          quantity: item.stock_quantity,
-          barcode: item.barcode,
-          status: item.status,
-          lastUpdated: new Date(item.last_updated).toLocaleString()
-        }))
-      );
+      if (filters.status) {
+        filtered = filtered.filter(item => item.status === filters.status);
+      }
+
+      setInventory(filtered);
     } catch (err) {
-      console.error('Fetch error:', err);
+      console.error('Fetch error:', err.message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchFilters();
+    fetchProducts();
     fetchInventory();
   }, []);
 
   return (
     <div className="inventory-tracking">
       <h2>Inventory</h2>
+
       <div className="filter-section">
         <select
           value={filters.product}
@@ -96,18 +74,6 @@ const InventoryTracking = () => {
         </select>
 
         <select
-          value={filters.warehouse}
-          onChange={e => setFilters({ ...filters, warehouse: e.target.value })}
-        >
-          <option value="">All Warehouses</option>
-          {warehouses.map(w => (
-            <option key={w.warehouse_id} value={w.name}>
-              {w.name} ({w.location})
-            </option>
-          ))}
-        </select>
-
-        <select
           value={filters.status}
           onChange={e => setFilters({ ...filters, status: e.target.value })}
         >
@@ -116,6 +82,7 @@ const InventoryTracking = () => {
           <option value="reserved">Reserved</option>
           <option value="in_transit">In Transit</option>
           <option value="damaged">Damaged</option>
+          <option value="quarantined">Quarantined</option>
         </select>
 
         <button onClick={fetchInventory}>Apply Filters</button>
@@ -128,25 +95,25 @@ const InventoryTracking = () => {
           <thead>
             <tr>
               <th>Product</th>
-              <th>Warehouse</th>
-              <th>Location</th>
-              <th>Quantity</th>
-              <th>Barcode</th>
+              <th>Batch ID</th>
               <th>Status</th>
+              <th>Batch Quantity</th>
+              <th>Inventory Stock</th>
+              <th>Barcode</th>
               <th>Last Updated</th>
             </tr>
           </thead>
           <tbody>
             {inventory.length > 0 ? (
               inventory.map(item => (
-                <tr key={item.id}>
-                  <td>{item.product}</td>
-                  <td>{item.warehouse}</td>
-                  <td>{item.location}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.barcode}</td>
+                <tr key={`${item.inventory_id}-${item.batch_id}`}>
+                  <td>{item.product_name}</td>
+                  <td>{item.batch_id}</td>
                   <td>{item.status}</td>
-                  <td>{item.lastUpdated}</td>
+                  <td>{item.batch_quantity}</td>
+                  <td>{item.stock_quantity}</td>
+                  <td>{item.barcode}</td>
+                  <td>{new Date(item.last_updated).toLocaleString()}</td>
                 </tr>
               ))
             ) : (
