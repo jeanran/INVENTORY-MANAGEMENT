@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import './InventoryTracking.css';
 
 const supabaseUrl = 'https://iradphcrwwokdrnhxpnd.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyYWRwaGNyd3dva2Rybmh4cG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3MTI5ODEsImV4cCI6MjA2MjI4ODk4MX0.X1okOgCMPHNh_vufxDnSlENTO99tMDjkSOXMeWawNrU';
+const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your actual key
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -38,8 +38,6 @@ const InventoryTracking = () => {
       query = query.eq('status', filters.status);
     }
 
-    // Product and warehouse filtering need special handling:
-    // Supabase doesn’t support joins with filter fields on related tables directly
     const { data, error } = await query;
 
     if (error) {
@@ -61,7 +59,6 @@ const InventoryTracking = () => {
         );
       }
 
-      console.log('Fetched Inventory:', filteredData);
       setInventory(filteredData.map(item => ({
         inventory_id: item.inventory_id,
         product: item.products?.name ?? 'N/A',
@@ -82,24 +79,33 @@ const InventoryTracking = () => {
     <div className="inventory-tracking">
       <h2>Inventory Tracking</h2>
       <div className="filter-section">
-        <input
-          type="text"
-          placeholder="Search by Product"
-          value={filters.product}
-          onChange={e => setFilters({ ...filters, product: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Search by Warehouse"
-          value={filters.warehouse}
-          onChange={e => setFilters({ ...filters, warehouse: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Search by Barcode"
-          value={filters.barcode}
-          onChange={e => setFilters({ ...filters, barcode: e.target.value })}
-        />
+        <div className="input-group">
+          <input
+            id="productInput"
+            type="text"
+            placeholder="Search by Product"
+            value={filters.product}
+            onChange={e => setFilters({ ...filters, product: e.target.value })}
+          />
+        </div>
+        <div className="input-group">
+          <input
+            id="warehouseInput"
+            type="text"
+            placeholder="Search by Warehouse"
+            value={filters.warehouse}
+            onChange={e => setFilters({ ...filters, warehouse: e.target.value })}
+          />
+        </div>
+        <div className="input-group">
+          <input
+            id="barcodeInput"
+            type="text"
+            placeholder="Search by Barcode"
+            value={filters.barcode}
+            onChange={e => setFilters({ ...filters, barcode: e.target.value })}
+          />
+        </div>
         <select
           value={filters.status}
           onChange={e => setFilters({ ...filters, status: e.target.value })}

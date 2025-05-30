@@ -11,7 +11,7 @@ const btnStyle = {
   padding: '10px 20px',
   fontWeight: 'bold',
   fontSize: '1rem',
-  backgroundColor: '#0077ff',
+  backgroundColor: '#172a45',
   color: 'white',
   border: 'none',
   borderRadius: '6px',
