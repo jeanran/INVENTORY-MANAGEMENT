@@ -21,20 +21,26 @@ const InventoryTracking = () => {
   // Fetch filter options
   const fetchFilters = async () => {
     const { data: productList } = await supabase.from('products').select('product_id, name');
-    const { data: warehouseList } = await supabase.from('warehouses').select('warehouse_id, name');
+    const { data: warehouseList } = await supabase.from('warehouses').select('warehouse_id, name, location');
     setProducts(productList || []);
     setWarehouses(warehouseList || []);
   };
 
-  // Fetch inventory based on filters
+  // Fetch inventory with filters
   const fetchInventory = async () => {
     setLoading(true);
     try {
       let query = supabase
         .from('inventory')
-        .select(
-          `inventory_id, stock_quantity, barcode, status, last_updated, products:product_id(name), warehouses:warehouse_id(name)`
-        )
+        .select(`
+          inventory_id,
+          stock_quantity,
+          barcode,
+          status,
+          last_updated,
+          products:product_id (name),
+          warehouses:warehouse_id (name, location)
+        `)
         .order('last_updated', { ascending: false });
 
       if (filters.status) query = query.eq('status', filters.status);
@@ -56,6 +62,7 @@ const InventoryTracking = () => {
           id: item.inventory_id,
           product: item.products?.name || 'N/A',
           warehouse: item.warehouses?.name || 'N/A',
+          location: item.warehouses?.location || 'N/A',
           quantity: item.stock_quantity,
           barcode: item.barcode,
           status: item.status,
@@ -94,7 +101,9 @@ const InventoryTracking = () => {
         >
           <option value="">All Warehouses</option>
           {warehouses.map(w => (
-            <option key={w.warehouse_id} value={w.name}>{w.name}</option>
+            <option key={w.warehouse_id} value={w.name}>
+              {w.name} ({w.location})
+            </option>
           ))}
         </select>
 
@@ -120,6 +129,7 @@ const InventoryTracking = () => {
             <tr>
               <th>Product</th>
               <th>Warehouse</th>
+              <th>Location</th>
               <th>Quantity</th>
               <th>Barcode</th>
               <th>Status</th>
@@ -132,6 +142,7 @@ const InventoryTracking = () => {
                 <tr key={item.id}>
                   <td>{item.product}</td>
                   <td>{item.warehouse}</td>
+                  <td>{item.location}</td>
                   <td>{item.quantity}</td>
                   <td>{item.barcode}</td>
                   <td>{item.status}</td>
@@ -140,7 +151,7 @@ const InventoryTracking = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>
+                <td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>
                   🚫 No inventory data found.
                 </td>
               </tr>

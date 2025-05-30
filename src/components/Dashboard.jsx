@@ -3,6 +3,7 @@ import InventoryTracking from './InventoryTracking';
 import InventorySummary from './InventorySummary';
 import LogoutButton from './LogoutButton';
 
+
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate();
 
@@ -22,7 +23,9 @@ export default function Dashboard({ user, onLogout }) {
               <button onClick={() => navigate('/inventory')} style={styles.button}>
                 Inventory Summary
               </button>
+
             </div>
+            
 
             <LogoutButton onLogout={onLogout} />
           </div>

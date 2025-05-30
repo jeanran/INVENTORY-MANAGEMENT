@@ -1,0 +1,64 @@
+.inventory-summary {
+  padding: 30px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #172a45;
+  background-color: #f8f9fa;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-summary h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Horizontal scroll container */
+.summary-cards {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+}
+
+.summary-cards::-webkit-scrollbar {
+  height: 8px;
+}
+
+.summary-cards::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+/* Individual card styles */
+.card {
+  flex: 0 0 auto;
+  min-width: 220px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  scroll-snap-align: start;
+}
+
+/* Alert styles */
+.alert.low-stock {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+}
+
+.alert.out-of-stock {
+  background-color: #ffebee;
+  border-left: 4px solid #dc3545;
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
