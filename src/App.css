@@ -1,51 +1,22 @@
-.app-container {
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #172a45;
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
-  height: 100vh;
-}
+  justify-content: center;
+  align-items: center;
 
-.sidebar {
-  width: 200px;
-  background-color: #f4f4f4;
-  padding: 1rem;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+*{
+  box-sizing: border-box;
 }
-
-.nav-links {
-  display: flex;
-  flex-direction: column;
 }
-
-.nav-link {
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.3s;
+h1 {
+  
+  color: #ffffff;
+  font-size: 2rem;
 }
-
-.nav-link:hover {
-  background-color: #e0e0e0;
-}
-
-.active {
-  background-color: #28495f;
-  color: white;
-}
-
-.logout-button {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background-color: #28495f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the dashboard */
-  justify-content: center; /* Center the dashboard */
+.App {
+  text-align: center;
 }
